@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { onAuthStateChanged, User, signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
+import { onAuthStateChanged, User, signInWithPopup, signOut } from 'firebase/auth';
 import { collection, query, where, orderBy, onSnapshot, Timestamp, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db, googleProvider } from '@/lib/firebase';
 import type { ScanResult } from '@/types/scan';
@@ -22,11 +22,6 @@ const Index = () => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Handle redirect result first
-    getRedirectResult(auth).catch((err) => {
-      console.error("Redirect result error:", err);
-    });
-
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
@@ -60,7 +55,7 @@ const Index = () => {
 
   const handleLogin = async () => {
     try {
-      await signInWithRedirect(auth, googleProvider);
+      await signInWithPopup(auth, googleProvider);
     } catch (err) {
       console.error("Login failed:", err);
     }
